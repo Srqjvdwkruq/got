@@ -5,11 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Classic Crossword</title>
     <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/classic.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    
+    <div id="categoryContainer">
+        <!-- ปุ่ม Back -->
+        <button id="gobackBtn"><i class='bx bx-arrow-back'></i></button>
+        <h1 class="category-title">Select Category</h1>
+
+        <!-- ปุ่ม Category -->
+        <div class="category-list">
+            <button class="category-btn" data-category="animals">Animals</button>
+            <button class="category-btn" data-category="countries">Countries</button>
+            <button class="category-btn" data-category="foods">Foods</button>
+            <button class="category-btn" data-category="sports">Sports</button>
+            <button class="category-btn" data-category="transport">Transport</button>
+        </div>
+    </div>
     
     <script src="../assets/js/game.js"></script>
 </body>

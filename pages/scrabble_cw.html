@@ -12,10 +12,9 @@
 </head>
 <body>
     <div class="game-container">
-        <!-- Game Area -->
         <div class="game-area">
 
-            <!-- ปุ่ม Menu and Dropdown-->
+            <!-- ปุ่ม Menu -->
             <div id="menuBtn" class="menu-container">
                 <button class="menu-btn" aria-label="Menu"><i class='bx bx-menu'></i></button>
                 <div class="menu-dropdown">
@@ -24,8 +23,10 @@
                 </div>
             </div>
             
-            <!--  ตาราง Scrabble -->
-            <div class="grid scrabble-grid" role="grid" aria-label="Scrabble Crossword Grid"></div>
+            <!-- เพิ่ม div wrapper สำหรับ grid -->
+            <div class="grid-wrapper">
+                <div class="scrabble-grid" role="grid" aria-label="Scrabble Crossword Grid"></div>
+            </div>
             
             <!-- Letter Rack -->
             <div class="rack-container">
@@ -36,24 +37,17 @@
                 <!-- Letters -->
                 <div class="letter-rack" id="letter-rack" role="list" aria-label="Letter Rack"></div>
 
-                <button id="refreshBtn" class="rack-btn tooltip" aria-label="Refresh or Return Letters">
-                    <i class="fa-solid fa-arrows-rotate"></i>
-                </button>
-                <button id="clearBtn" class="rack-btn tooltip" aria-label="Clear Letters">
+                <button id="undoBtn" class="rack-btn tooltip" aria-label="Return Letters">
                     <i class="fa-solid fa-arrows-down-to-line"></i>
                 </button>
             </div>
 
-            <!-- ส่วนปุ่มควบคุม -->
-            <div class="game-control">
-                
-            </div>
+            <!-- Action Buttons -->
             <div class="action-buttons">
                 <button id="resignBtn" class="game-btn" aria-label="Resign Game">Resign</button>
                 <button id="skipBtn" class="game-btn" aria-label="Skip Turn">Skip</button>
                 <button id="swapBtn" class="game-btn" aria-label="Swap Letters">Swap</button>
                 <button id="submitBtn" class="game-btn primary" aria-label="Submit Word">Submit</button>
-                </div>
             </div>
         </div>
 
@@ -65,7 +59,7 @@
                         <h2>Player</h2>
                         <div class="stats">
                             <span id="playerScore" aria-live="polite">0</span>
-                            <span id="playerTime" aria-live="polite">00:00</span>
+                            <span id="playerTime" aria-live="polite">15:00</span>
                         </div>
                     </div>
                 </div>
@@ -80,7 +74,7 @@
                         <div class="stats">
                             <div id="bot-rack" class="letter-rack" style="display: none;"></div>
                             <span id="botScore" aria-live="polite">0</span>
-                            <span id="botTime" aria-live="polite">00:00</span>
+                            <span id="botTime" aria-live="polite">15:00</span>
                         </div>
                     </div>
                 </div>
@@ -134,7 +128,7 @@
     </div>
 
     <script src="../assets/js/game.js"></script>
-    <script src="../assets/js/scrabbleBot.js" type="module"></script>
     <script src="../assets/js/scrabbleMode.js" type="module"></script>
+    <script src="../assets/js/scrabbleBot.js" type="module"></script>
 </body>
 </html>

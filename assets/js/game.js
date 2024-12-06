@@ -8,30 +8,106 @@ const elements = {
     description: document.querySelector('.description')
 };
 
+
 // แอนิเมชั่นตัวอักษรหน้าหลัก
 function addAnimation(element, animationClass) {
     if (!element) return;
     element.classList.remove('fade-in', 'slide-in', 'pop-in');
-    void element.offsetWidth; // Trigger reflow
+    void element.offsetWidth;
     element.classList.add(animationClass);
 }
 
-// Screen Transition Functions
+// ฟังก์ชันการเปลี่ยนหน้าจอ
 function showScreen(screenToShow, screenToHide) {
     // Hide current screen
-    screenToHide.style.opacity = '0';
+    screenToHide.style.opacity = '0'; // ซ่อนหน้าจอปัจจุบัน
     
-    setTimeout(() => {
+    setTimeout(() => { // ตั้งเวลา
         screenToHide.style.display = 'none';
-        // Show new screen
+        // แสดงหน้าจอใหม่
         screenToShow.style.display = 'flex';
-        // Force reflow
+        // บังคับ reflow
         void screenToShow.offsetWidth;
+        // แสดงหน้าจอใหม่
         screenToShow.style.opacity = '1';
     }, 300);
 }
 
-// Confirmation Box Functions
+// Background Animation
+class BackgroundAnimation {
+    constructor() {
+        this.container = document.querySelector('.background-animation');
+        this.letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        this.maxLetters = 20; // จำนวนตัวอักษรสูงสุด
+        this.createInterval = null;
+        this.init();
+    }
+
+    init() {
+        if (!this.container) return;
+        
+        // สร้างตัวอักษรใหม่ช้าลง (ทุก 1.2 วินาที)
+        this.createInterval = setInterval(() => this.createLetter(), 1200);
+        
+        // เริ่มต้นด้วยตัวอักษรน้อยลง
+        for (let i = 0; i < this.maxLetters / 3; i++) {
+            this.createLetter();
+        }
+    }
+
+    createLetter() {
+        if (!this.container) return;
+        
+        // ตรวจสอบจำนวนตัวอักษรปัจจุบัน
+        const currentLetters = this.container.children.length;
+        if (currentLetters >= this.maxLetters) {
+            return;
+        }
+        
+        const letter = document.createElement('div');
+        letter.className = 'falling-letter';
+        
+        // สุ่มตัวอักษร
+        letter.textContent = this.letters[Math.floor(Math.random() * this.letters.length)];
+        
+        // สุ่มขนาดตัวอักษร
+        const sizes = ['small', 'medium', 'large'];
+        letter.classList.add(sizes[Math.floor(Math.random() * sizes.length)]);
+        
+        // สุ่มตำแหน่งและการหมุนของตัวอักษร
+        const left = Math.random() * 100;
+        const initialRotation = Math.random() * 360;
+        const fallDelay = Math.random() * 5;
+        
+        letter.style.cssText = `
+            left: ${left}%;
+            transform: rotate(${initialRotation}deg);
+            animation-delay: -${fallDelay}s;
+        `;
+        
+        this.container.appendChild(letter);
+        
+        // ลบตัวอักษรเมื่อแอนิเมชันสิ้นสุดลง
+        letter.addEventListener('animationend', () => {
+            if (letter && letter.parentNode === this.container) {
+                this.container.removeChild(letter);
+            }
+        });
+    }
+
+    stop() {
+        if (this.createInterval) {
+            clearInterval(this.createInterval);
+            this.createInterval = null;
+        }
+        
+        if (this.container) {
+            this.container.innerHTML = '';
+        }
+    }
+}
+
+// ฟังก์ชัน Confirm Box
 function showConfirmBox(message, onConfirm, onCancel) {
     const confirmBox = document.getElementById('confirmBox');
     const confirmMessage = document.getElementById('confirmMessage');
@@ -72,43 +148,58 @@ function showConfirmBox(message, onConfirm, onCancel) {
     document.addEventListener('keydown', handleEsc);
 }
 
-// Menu Button Functions
+// ฟังก์ชัน Menu Button
 function setupMenuButton() {
     // Get menu elements
     const menuBtn = document.getElementById('menuBtn');
     const menuButton = menuBtn?.querySelector('.menu-btn');
     const menuDropdown = menuBtn?.querySelector('.menu-dropdown');
+    const continueBtn = document.getElementById('continueBtn');
+    const quitBtn = document.getElementById('quitBtn');
+
+    if (!menuBtn || !menuButton || !menuDropdown) {
+        console.error('Menu elements not found:', { menuBtn, menuButton, menuDropdown });
+        return;
+    }
 
     // Toggle dropdown when Menu button is clicked
-    menuButton?.addEventListener('click', (e) => {
+    menuBtn.addEventListener('click', (e) => {  
         e.stopPropagation();
-        menuDropdown?.classList.toggle('show');
+        menuDropdown.classList.toggle('show');
     });
+
+    // Handle continue button
+    if (continueBtn) {
+        continueBtn.addEventListener('click', () => {
+            menuDropdown.classList.remove('show');
+            // Add your continue game logic here
+        });
+    }
+
+    // Handle quit button
+    if (quitBtn) {
+        quitBtn.addEventListener('click', () => {
+            showConfirmBox('Are you sure you want to quit?', 
+                () => {
+                    window.location.href = '../index.html';
+                },
+                () => {
+                    menuDropdown.classList.remove('show');
+                }
+            );
+        });
+    }
 
     // Close dropdown when clicking outside
     document.addEventListener('click', (e) => {
-        if (!menuBtn?.contains(e.target) && menuDropdown?.classList.contains('show')) {
+        if (menuDropdown.classList.contains('show') && !menuBtn.contains(e.target)) {
             menuDropdown.classList.remove('show');
         }
     });
 
-    // Continue button - closes dropdown
-    elements.continueBtn?.addEventListener('click', () => {
-        menuDropdown?.classList.remove('show');
-    });
-
-    // Quit button - shows confirmation before quitting
-    elements.quitBtn?.addEventListener('click', () => {
-        menuDropdown?.classList.remove('show');
-        showConfirmBox(
-            'Are you sure you want to quit the game?',
-            () => window.location.href = '../index.html'
-        );
-    });
-
-    // Close dropdown on ESC key
+    // Close dropdown when pressing Escape
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && menuDropdown?.classList.contains('show')) {
+        if (e.key === 'Escape' && menuDropdown.classList.contains('show')) {
             menuDropdown.classList.remove('show');
         }
     });
@@ -128,80 +219,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => addAnimation(elements.description, 'slide-in'), 200);
     }
 });
-
-// Background Animation
-class BackgroundAnimation {
-    constructor() {
-        this.container = document.querySelector('.background-animation');
-        this.letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        this.maxLetters = 20; // ลดจำนวนตัวอักษรสูงสุด
-        this.createInterval = null;
-        this.init();
-    }
-
-    init() {
-        if (!this.container) return;
-        
-        // สร้างตัวอักษรใหม่ช้าลง (ทุก 1.2 วินาที)
-        this.createInterval = setInterval(() => this.createLetter(), 1200);
-        
-        // เริ่มต้นด้วยตัวอักษรน้อยลง
-        for (let i = 0; i < this.maxLetters / 3; i++) {
-            this.createLetter();
-        }
-    }
-
-    createLetter() {
-        if (!this.container) return;
-        
-        // ตรวจสอบจำนวนตัวอักษรปัจจุบัน
-        const currentLetters = this.container.children.length;
-        if (currentLetters >= this.maxLetters) {
-            return;
-        }
-        
-        const letter = document.createElement('div');
-        letter.className = 'falling-letter';
-        
-        // Random letter
-        letter.textContent = this.letters[Math.floor(Math.random() * this.letters.length)];
-        
-        // Random size class
-        const sizes = ['small', 'medium', 'large'];
-        letter.classList.add(sizes[Math.floor(Math.random() * sizes.length)]);
-        
-        // Random position and initial rotation
-        const left = Math.random() * 100;
-        const initialRotation = Math.random() * 360;
-        const fallDelay = Math.random() * 5;
-        
-        letter.style.cssText = `
-            left: ${left}%;
-            transform: rotate(${initialRotation}deg);
-            animation-delay: -${fallDelay}s;
-        `;
-        
-        this.container.appendChild(letter);
-        
-        // Remove letter after animation
-        letter.addEventListener('animationend', () => {
-            if (letter && letter.parentNode === this.container) {
-                this.container.removeChild(letter);
-            }
-        });
-    }
-
-    stop() {
-        if (this.createInterval) {
-            clearInterval(this.createInterval);
-            this.createInterval = null;
-        }
-        
-        if (this.container) {
-            this.container.innerHTML = '';
-        }
-    }
-}
 
 // Initialize animation when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {

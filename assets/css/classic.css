@@ -1,0 +1,26 @@
+#categoryContainer {
+    display: flex;
+    padding: 2rem;
+    padding-left: 6rem;
+    max-width: 1800px;
+    margin: 0 auto;
+    min-height: 100vh;
+    gap: 2rem;
+    justify-content: space-between;
+    align-items: flex-start;
+    position: relative;
+    z-index: 0;
+}
+
+.category-title {
+    text-shadow: 2px 2px 4px var(--shadow-color);
+    margin-bottom: 20px;
+    font-size:  calc(4vh + 2vw);;
+    color: #fff;
+    margin: 1.5rem 0;
+    z-index: 1;
+}
+
+#gobackBtn {
+    margin-top: 40px;
+}
